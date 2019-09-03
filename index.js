@@ -1,13 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const uniqid = require('uniqid');
-let users = [{
-    login: "andrey.mardash@gmail.com",
-    password: "2002126server",
-    id: "5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B538F",
-    status: "admin",
-  }
-];
+let dataBase = {
+  users:
+    {
+      "5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B538F":
+        {
+          login: "andrey.mardash@gmail.com",
+          password: "2002126server",
+          status: "admin",
+        }
+    }
+};
 
 let list = [{
   title: 'Some',
@@ -36,50 +40,54 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
-app.get("/5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B538F",(req, res) =>{
+app.get("/5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B538F", (req, res) => {
     console.log(req, res);
     res.status(201).json({message: true});
   }
 );
 
-app.get('/',(req, res) =>{
+app.get('/', (req, res) => {
     console.log(req, res);
     res.status(201).json(list);
   }
 );
 
-app.post('/authorization',(req, res) => {
+app.post('/authorization', (req, res) => {
   setTimeout(() => {
     console.log(req, res);
-    if(req.body.login === users[0].login && req.body.password === users[0].password){
-      res.status(200).json({ message: 'Well done:)', id: users[0].id, status: "admin"});
+    let isUser = false;
+    Object.entries(dataBase.users).forEach(([key, value]) => {
+      if(value.login === req.body.login && value.password === req.body.password) isUser = {id: key, status: value.status};
+    });
+    if(typeof isUser !== 'boolean') {
+      res.status(200).json({message: 'Well done:)', id: isUser.id, status: isUser.status})
     } else {
-      res.status(401).json({message: "Authorization failed."})
+      res.status(401).json({message: `Authorization failed. isUser === ${isUser}`});
     }
   }, 2000);
 });
 
-app.post('/',(req, res) => {
+app.post('/', (req, res) => {
   setTimeout(() => {
     console.log(req, res);
-    res.status(200).json({ message: 'Well done:)'});
+    res.status(200).json({message: 'Well done:)'});
     list.push(req.body);
   }, 3000);
 });
 
-app.delete('/', (req,res) => {
+app.delete('/', (req, res) => {
   console.log(req, res);
   list = list.filter(item => item.id !== req.body.id);
   res.status(200).json({message: JSON.stringify(list)});
 });
 
 app.delete('/deleteAll', (req, res) => {
-    list = [];
-    res.status(200).json({list});
+  list = [];
+  res.status(200).json({list});
 });
 
 app.listen(PORT, () => console.log('SERVER WORKS!!!'));
