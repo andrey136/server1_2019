@@ -52,7 +52,9 @@ app.get("/5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B
 
 app.get('/', (req, res) => {
     console.log(req, res);
-    res.status(201).json(list);
+    setTimeout((req, res) => {
+      res.status(201).json({ message: true, list: list});
+    }, 2000)
   }
 );
 
@@ -76,7 +78,7 @@ app.post('/', (req, res) => {
     console.log(req, res);
     res.status(200).json({message: 'Well done:)'});
     list.push(req.body);
-  }, 3000);
+  }, 2000);
 });
 
 app.delete('/', (req, res) => {
