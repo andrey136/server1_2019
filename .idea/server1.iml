@@ -9,8 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="@types/node" level="application" />
-    <orderEntry type="library" name="@types/http-server" level="application" />
     <orderEntry type="library" name="@types/mongoose" level="application" />
-    <orderEntry type="library" name="@types/body-parser" level="application" />
+    <orderEntry type="library" name="@types/mongoose-promise" level="application" />
   </component>
 </module>

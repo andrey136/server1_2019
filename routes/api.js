@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const ToDo = require('../models/ToDo');
 const NewUser = require('../models/newUser');
 
 router.post('/list/newUser', (req, res) => {
