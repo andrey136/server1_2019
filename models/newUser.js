@@ -14,13 +14,16 @@ const NewUserSchema = new Schema({
   },
   login: {
     type: String,
-    required: [true, 'Login field is required']
+    required: [true],
+    unique: true
   },
   password: {
     type: String,
     required: [true, 'Password field is required']
   }
 });
+
+
 
 const NewUser = mongoose.model('Users', NewUserSchema);
 
