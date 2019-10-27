@@ -37,10 +37,17 @@ router.delete('/list/deleteAll/:id', (req, res) => {
 });
 
 router.post('/authorization', (req, res) => {
-  console.log('MMMMMIIIIIISSSSSTTTTTAAAAKKKKKEEEE');
   NewUser.find({login: req.body.login, password: req.body.password})
     .then((user) => res.send(user[0]))
     .catch((err) => res.send({err: "Wrong login or password"}));
+});
+
+router.delete('/list/deleteItem/:id', (req, res) => {
+  NewUser.findById(req.params.id).then((user) => {
+    const list = [];
+    user.list.map(el => el.id === req.body.id && list.push(...user.list.filter(item => item !== el)));
+    NewUser.findByIdAndUpdate({_id: req.params.id},{list: list}).then(() => res.send(list));
+  }).catch(err => res.send({message: "ERROR: something went wrong"}));
 });
 
 module.exports = router;
