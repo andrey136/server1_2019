@@ -46,14 +46,22 @@ router.delete('/list/deleteItem/:id', (req, res) => {
   NewUser.findById(req.params.id).then((user) => {
     const list = [];
     user.list.map(el => el.id === req.body.id && list.push(...user.list.filter(item => item !== el)));
-    console.log(list);
+    console.log(req.body.id);
     NewUser.findByIdAndUpdate({_id: req.params.id},{list: list}).then(() => res.send(list));
-  }).catch(err => res.send({message: "ERROR: something went wrong"}));
+  }).catch(err => res.send("ERROR: something went wrong"));
+
 });
 
 router.put('/list/changeDone/:id', (req, res) => {
   NewUser.findById(req.params.id).then((user) => {
     user.list.map(el => el.id === req.body.id ? el.done = !el.done : '');
+    NewUser.findByIdAndUpdate({_id: req.params.id},{list: user.list}).then(() => res.send(user.list));
+  }).catch(err => res.send({message: "ERROR: something went wrong"}));
+});
+
+router.put('/list/changeValue/:id', (req, res) => {
+  NewUser.findById(req.params.id).then((user) => {
+    user.list.map(el => el.id === req.body.id ? el.title = req.body.title : '');
     NewUser.findByIdAndUpdate({_id: req.params.id},{list: user.list}).then(() => res.send(user.list));
   }).catch(err => res.send({message: "ERROR: something went wrong"}));
 });
