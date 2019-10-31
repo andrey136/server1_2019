@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const NewUser = require('../models/newUser');
 
+// connection between different ports
+router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+// registration
 router.post('/list/newUser', (req, res) => {
   console.log(req.body);
   NewUser.create(req.body).then((user) => {
@@ -9,18 +17,26 @@ router.post('/list/newUser', (req, res) => {
   }).catch(err => res.send(err))
 });
 
+// authorization
+router.post('/authorization', (req, res, next) => {
+  console.log(req.body);
+  NewUser.find({login: req.body.login, password: req.body.password})
+    .then((user) => {
+      console.log(user);
+      res.send(user[0])
+    })
+    .catch((err) => res.send({err: "Wrong login or password"}));
+});
+
+// get all user info by id
 router.get('/list/:id', (req, res) => {
   NewUser.findById(req.params.id).then((user) => {
-    console.log(user);
     res.send(user);
   });
 });
 
+// add a new todo to your list
 router.post('/list/:id', (req, res) => {
-  // ToDo.create(req.body).then((todo) => {
-  //   console.log(todo);
-  //   res.send({type: "POST", todo: todo});
-  // });
   NewUser.findById(req.params.id).then((user) => {
     console.log(user);
     const list = user.list.concat([req.body]);
@@ -28,20 +44,12 @@ router.post('/list/:id', (req, res) => {
   }).catch((err) => res.send({type: "ERROR: you are not logged in"}));
 });
 
-router.put('/list/:id', (req, res) => {
-  res.send({type: "PUT"});
-});
-
+// delete all your todos from the list
 router.delete('/list/deleteAll/:id', (req, res) => {
   NewUser.findByIdAndUpdate({_id: req.params.id}, {list: []}).then((user) => res.send({type: 'DELETED ALL', list: []})).catch((err) => res.send({type: `ERROR: ${err}`}));
 });
 
-router.post('/authorization', (req, res) => {
-  NewUser.find({login: req.body.login, password: req.body.password})
-    .then((user) => res.send(user[0]))
-    .catch((err) => res.send({err: "Wrong login or password"}));
-});
-
+// delete one specific todo
 router.delete('/list/deleteItem/:id', (req, res) => {
   NewUser.findById(req.params.id).then((user) => {
     const list = [];
@@ -52,16 +60,18 @@ router.delete('/list/deleteItem/:id', (req, res) => {
 
 });
 
-router.put('/list/changeDone/:id', (req, res) => {
+// change the state of your todo: title value
+router.put('/list/changeValue/:id', (req, res) => {
   NewUser.findById(req.params.id).then((user) => {
-    user.list.map(el => el.id === req.body.id ? el.done = !el.done : '');
+    user.list.map(el => el.id === req.body.id ? el.title = req.body.title : '');
     NewUser.findByIdAndUpdate({_id: req.params.id},{list: user.list}).then(() => res.send(user.list));
   }).catch(err => res.send({message: "ERROR: something went wrong"}));
 });
 
-router.put('/list/changeValue/:id', (req, res) => {
+// change the state of your todo: done value
+router.put('/list/changeDone/:id', (req, res) => {
   NewUser.findById(req.params.id).then((user) => {
-    user.list.map(el => el.id === req.body.id ? el.title = req.body.title : '');
+    user.list.map(el => el.id === req.body.id ? el.done = !el.done : '');
     NewUser.findByIdAndUpdate({_id: req.params.id},{list: user.list}).then(() => res.send(user.list));
   }).catch(err => res.send({message: "ERROR: something went wrong"}));
 });
