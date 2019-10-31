@@ -18,4 +18,4 @@ app.use(express.static('public'));
 mongoose.connect('mongodb+srv://andrey:tripleks@cluster0-sys07.mongodb.net/andrey');
 mongoose.Promise = global.Promise;
 
-app.listen(5000, () => console.log('SERVER WORKS!!!'));
+app.listen(process.env.port || 5000, () => console.log('SERVER WORKS!!!'));
