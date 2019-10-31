@@ -70,6 +70,7 @@ router.put('/list/changeValue/:id', (req, res) => {
 
 // change the state of your todo: done value
 router.put('/list/changeDone/:id', (req, res) => {
+  console.log(req.body);
   NewUser.findById(req.params.id).then((user) => {
     user.list.map(el => el.id === req.body.id ? el.done = !el.done : '');
     NewUser.findByIdAndUpdate({_id: req.params.id},{list: user.list}).then(() => res.send(user.list));

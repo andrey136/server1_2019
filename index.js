@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 // set app express
 const app = express();
 
-express().use((req, res, next) => {
+app.use((req, res, next) => {
   // eslint-disable-line consistent-return
   res.header('Access-Control-Allow-Origin', '*');
   res.header(
