@@ -22,8 +22,11 @@ router.post('/authorization', (req, res, next) => {
   console.log(req.body);
   NewUser.find({login: req.body.login, password: req.body.password})
     .then((user) => {
-      console.log(user);
-      res.send(user[0])
+      if(user[0] === undefined) {
+        throw new Error('Wrong login or password');
+      } else {
+        res.send(user[0]);
+      }
     })
     .catch((err) => res.send({err: "Wrong login or password"}));
 });
